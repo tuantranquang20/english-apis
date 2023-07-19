@@ -8,15 +8,13 @@ import {
   Delete,
 } from '@nestjs/common';
 import { ReadingService } from './reading.service';
-import { CreateReadingDto } from './dto/create-reading.dto';
-import { UpdateReadingDto } from './dto/update-reading.dto';
 
 @Controller('reading')
 export class ReadingController {
   constructor(private readonly readingService: ReadingService) {}
 
   @Post()
-  create(@Body() createReadingDto: CreateReadingDto) {
+  create(@Body() createReadingDto) {
     return this.readingService.create(createReadingDto);
   }
 
@@ -31,7 +29,7 @@ export class ReadingController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateReadingDto: UpdateReadingDto) {
+  update(@Param('id') id: string, @Body() updateReadingDto) {
     return this.readingService.update(+id, updateReadingDto);
   }
 

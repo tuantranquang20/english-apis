@@ -8,15 +8,13 @@ import {
   Delete,
 } from '@nestjs/common';
 import { ListeningService } from './listening.service';
-import { CreateListeningDto } from './dto/create-listening.dto';
-import { UpdateListeningDto } from './dto/update-listening.dto';
 
 @Controller('listening')
 export class ListeningController {
   constructor(private readonly listeningService: ListeningService) {}
 
   @Post()
-  create(@Body() createListeningDto: CreateListeningDto) {
+  create(@Body() createListeningDto) {
     return this.listeningService.create(createListeningDto);
   }
 
@@ -31,10 +29,7 @@ export class ListeningController {
   }
 
   @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateListeningDto: UpdateListeningDto,
-  ) {
+  update(@Param('id') id: string, @Body() updateListeningDto) {
     return this.listeningService.update(+id, updateListeningDto);
   }
 
