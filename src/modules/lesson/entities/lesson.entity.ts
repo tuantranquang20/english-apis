@@ -11,7 +11,7 @@ export type LessonDocument = HydratedDocument<Lesson>;
 export class Lesson extends BaseSchema {
   id: ObjectId;
 
-  @Prop({ type: [{ type: String, enum: LessonType }], required: true })
+  @Prop({ enum: LessonType, required: true })
   type: LessonType;
 
   @Prop({ required: true })

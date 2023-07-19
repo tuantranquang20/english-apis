@@ -1,7 +1,5 @@
 import { PipeTransform, Injectable } from '@nestjs/common';
-import trim from 'lodash/trim';
-import mapKeys from 'lodash/mapKeys';
-import isArray from 'lodash/isArray';
+import { trim, mapKeys, isArray } from 'lodash';
 
 type QueryType =
   | string
