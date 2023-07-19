@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { CreateGrammarDto } from './dto/create-grammar.dto';
-import { UpdateGrammarDto } from './dto/update-grammar.dto';
 
 @Injectable()
 export class GrammarService {
-  create(createGrammarDto: CreateGrammarDto) {
+  create(createGrammarDto) {
     return 'This action adds a new grammar';
   }
 
@@ -16,7 +14,7 @@ export class GrammarService {
     return `This action returns a #${id} grammar`;
   }
 
-  update(id: number, updateGrammarDto: UpdateGrammarDto) {
+  update(id: number, updateGrammarDto) {
     return `This action updates a #${id} grammar`;
   }
 

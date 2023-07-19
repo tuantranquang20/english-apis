@@ -8,15 +8,13 @@ import {
   Delete,
 } from '@nestjs/common';
 import { UserLearningService } from './user-learning.service';
-import { CreateUserLearningDto } from './dto/create-user-learning.dto';
-import { UpdateUserLearningDto } from './dto/update-user-learning.dto';
 
 @Controller('user-learning')
 export class UserLearningController {
   constructor(private readonly userLearningService: UserLearningService) {}
 
   @Post()
-  create(@Body() createUserLearningDto: CreateUserLearningDto) {
+  create(@Body() createUserLearningDto) {
     return this.userLearningService.create(createUserLearningDto);
   }
 
@@ -31,10 +29,7 @@ export class UserLearningController {
   }
 
   @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateUserLearningDto: UpdateUserLearningDto,
-  ) {
+  update(@Param('id') id: string, @Body() updateUserLearningDto) {
     return this.userLearningService.update(+id, updateUserLearningDto);
   }
 

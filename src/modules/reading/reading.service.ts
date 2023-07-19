@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { CreateReadingDto } from './dto/create-reading.dto';
-import { UpdateReadingDto } from './dto/update-reading.dto';
 
 @Injectable()
 export class ReadingService {
-  create(createReadingDto: CreateReadingDto) {
+  create(createReadingDto) {
     return 'This action adds a new reading';
   }
 
@@ -16,7 +14,7 @@ export class ReadingService {
     return `This action returns a #${id} reading`;
   }
 
-  update(id: number, updateReadingDto: UpdateReadingDto) {
+  update(id: number, updateReadingDto) {
     return `This action updates a #${id} reading`;
   }
 

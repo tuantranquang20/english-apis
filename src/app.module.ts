@@ -10,6 +10,8 @@ import { ListeningModule } from './modules/listening/listening.module';
 import { ReadingModule } from './modules/reading/reading.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { UserLearningModule } from './modules/user-learning/user-learning.module';
+import { APP_FILTER } from '@nestjs/core';
+import { InternalServerErrorFilter } from './commons/exeptions/exceptions.filter';
 
 @Module({
   imports: [
@@ -28,5 +30,11 @@ import { UserLearningModule } from './modules/user-learning/user-learning.module
     UserLearningModule,
   ],
   controllers: [],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: InternalServerErrorFilter,
+    },
+  ],
 })
 export class AppModule {}
