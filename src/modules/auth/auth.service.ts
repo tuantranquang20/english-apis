@@ -1,9 +1,23 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+// import { UserService } from '../user/user.service';
+// import { JwtService } from '@nestjs/jwt';
+// import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto) {
-    return 'This action adds a new auth';
+  constructor() {} // private readonly userService: UserService, // private readonly jwtService: JwtService,
+  async create(createAuthDto) {
+    // const existingUser = await this.userService.findByEmail(
+    //   createAuthDto.email,
+    // );
+    // if (existingUser) {
+    //   throw new UnauthorizedException('Email is already registered.');
+    // }
+    // const hashedPassword = await bcrypt.hash(createAuthDto.password, 10);
+    // return this.userService.create({
+    //   ...createAuthDto,
+    //   password: hashedPassword,
+    // });
   }
 
   findAll() {

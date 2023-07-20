@@ -1,9 +1,17 @@
 import { Injectable } from '@nestjs/common';
-
+import { UserDocument } from './entities/user.entity';
+import { InjectModel } from '@nestjs/mongoose';
+import { CollectionName } from '@src/commons/constants';
+import { SoftDeleteModel } from 'mongoose-delete';
 @Injectable()
 export class UserService {
-  create(createUserDto) {
-    return 'This action adds a new user';
+  constructor(
+    @InjectModel(CollectionName.USERS)
+    private model: SoftDeleteModel<UserDocument>,
+  ) {}
+  async create(createUserDto) {
+    const createdUser = new this.model(createUserDto);
+    return await createdUser.save();
   }
 
   findAll() {
@@ -20,5 +28,9 @@ export class UserService {
 
   remove(id: number) {
     return `This action removes a #${id} user`;
+  }
+
+  findByEmail(email: string) {
+    return this.model.findOne({ email }).exec();
   }
 }

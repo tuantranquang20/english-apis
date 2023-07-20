@@ -13,9 +13,14 @@ import { AuthService } from './auth.service';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post()
+  @Post('/register')
   create(@Body() createAuthDto) {
-    return this.authService.create(createAuthDto);
+    try {
+      return this.authService.create(createAuthDto);
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
   }
 
   @Get()
