@@ -14,5 +14,5 @@ export interface IUpdateLesson {
 }
 
 export interface ILessonFilter extends IFilterBase {
-  type: LessonType;
+  type?: LessonType;
 }

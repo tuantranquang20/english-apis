@@ -7,7 +7,8 @@ import {
   IUpdateLesson,
 } from './lesson.interface';
 import { SoftDeleteModel } from 'mongoose-delete';
-import { LessonDocument } from './entities/lesson.entity';
+import { Lesson, LessonDocument } from './entities/lesson.entity';
+import { FilterQuery } from 'mongoose';
 
 @Injectable()
 export class LessonService {
@@ -26,20 +27,40 @@ export class LessonService {
 
   async findAll(query: ILessonFilter) {
     try {
-      const { type, page, limit, orderBy, orderDirection } = query;
+      const { type, page, limit, orderBy, orderDirection, keyword } = query;
+      const filterOptions: FilterQuery<Lesson> = {};
 
+      if (type || keyword) {
+        filterOptions.$and = [];
+      }
+      if (type) {
+        filterOptions.$and.push({
+          type,
+        });
+      }
+      if (keyword) {
+        filterOptions.$and.push({
+          $or: [
+            {
+              name: { $regex: new RegExp(keyword, 'i') },
+            },
+            {
+              title: { $regex: new RegExp(keyword, 'i') },
+            },
+          ],
+        });
+      }
       const sortOptions = {};
       if (orderBy) {
         sortOptions[orderBy] = orderDirection === OrderDirection.DESC ? -1 : 1;
       }
 
       const lessons = await this.model
-        .find({
-          type,
-        })
+        .find(filterOptions)
         .skip(page)
         .limit(limit)
-        .sort(sortOptions);
+        .sort(sortOptions)
+        .select('_id type name title');
       return lessons;
     } catch (error) {
       throw error;
