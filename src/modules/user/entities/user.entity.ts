@@ -1,6 +1,6 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
-import { CollectionName } from '@src/commons/constants';
+import { CollectionName, Role } from '@src/commons/constants';
 import { BaseSchema } from 'src/commons/schema/base.schema';
 import { HydratedDocument, ObjectId } from 'mongoose';
 import * as MongooseDelete from 'mongoose-delete';
@@ -19,7 +19,7 @@ export class User extends BaseSchema {
   @Prop({ type: String, required: true })
   password: string;
 
-  @Prop({ type: String, enum: ['user', 'admin'], default: 'user' })
+  @Prop({ type: String, enum: Role, default: Role.USER })
   role: string;
 
   toJSON() {

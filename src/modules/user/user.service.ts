@@ -30,7 +30,7 @@ export class UserService {
     return `This action removes a #${id} user`;
   }
 
-  findByEmail(email: string) {
-    return this.model.findOne({ email }).exec();
+  async findByEmail(email: string) {
+    return await this.model.findOne({ email }).lean();
   }
 }

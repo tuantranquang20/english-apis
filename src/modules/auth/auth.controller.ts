@@ -12,10 +12,15 @@ import { JoiValidationPipe, TrimBodyPipe } from '@src/commons/pipe';
 import { ICreateAuth, ILoginAuth } from './auth.interface';
 import { AuthService } from './auth.service';
 import { createAuthValidator, loginAuthValidator } from './auth.validator';
+import { JwtService } from '@nestjs/jwt';
+import { SuccessResponse } from '@src/commons/helpers/response';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   @Post('/register')
   create(
@@ -36,7 +41,8 @@ export class AuthController {
     loginAuthDto: ILoginAuth,
   ) {
     try {
-      return { accessToken: await this.authService.login(loginAuthDto) };
+      const user = await this.authService.login(loginAuthDto);
+      return new SuccessResponse(user);
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException();
