@@ -9,6 +9,7 @@ export class AuthService {
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
   ) {}
+
   async create(createAuthDto) {
     const existingUser = await this.userService.findByEmail(
       createAuthDto.email,
@@ -16,11 +17,22 @@ export class AuthService {
     if (existingUser) {
       throw new UnauthorizedException('Email is already registered.');
     }
-    const hashedPassword = await bcrypt.hash(createAuthDto.password, 10);
+
     return this.userService.create({
       ...createAuthDto,
-      password: hashedPassword,
     });
+  }
+
+  async login(loginAuthDto) {
+    const user = await this.userService.findByEmail(loginAuthDto.email);
+    if (
+      !user ||
+      !(await bcrypt.compare(loginAuthDto.password, user.password))
+    ) {
+      throw new UnauthorizedException('Thông tin không hợp lệ');
+    }
+    const payload = { sub: user._id, email: user.email, role: user.role };
+    return this.jwtService.sign(payload);
   }
 
   findAll() {

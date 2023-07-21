@@ -11,7 +11,7 @@ export class User extends BaseSchema {
   id: ObjectId;
 
   @Prop({ type: String, required: true })
-  name: string;
+  username: string;
 
   @Prop({ type: String, required: true, unique: true })
   email: string;
@@ -21,6 +21,12 @@ export class User extends BaseSchema {
 
   @Prop({ type: String, enum: ['user', 'admin'], default: 'user' })
   role: string;
+
+  toJSON() {
+    const objUser = this.toObject();
+    delete objUser.password;
+    return objUser;
+  }
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
@@ -28,6 +34,13 @@ UserSchema.plugin(MongooseDelete, {
   deletedBy: true,
   deletedByType: String,
   overrideMethods: 'all',
+});
+
+UserSchema.set('toJSON', {
+  transform: (doc, ret) => {
+    delete ret.password;
+    return ret;
+  },
 });
 
 // Hàm middleware để mã hóa mật khẩu trước khi lưu vào MongoDB

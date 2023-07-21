@@ -6,20 +6,40 @@ import {
   Patch,
   Param,
   Delete,
+  InternalServerErrorException,
 } from '@nestjs/common';
+import { JoiValidationPipe, TrimBodyPipe } from '@src/commons/pipe';
+import { ICreateAuth, ILoginAuth } from './auth.interface';
 import { AuthService } from './auth.service';
+import { createAuthValidator, loginAuthValidator } from './auth.validator';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('/register')
-  create(@Body() createAuthDto) {
+  create(
+    @Body(new TrimBodyPipe(), new JoiValidationPipe(createAuthValidator))
+    createAuthDto: ICreateAuth,
+  ) {
     try {
       return this.authService.create(createAuthDto);
     } catch (error) {
       console.log(error);
-      throw error;
+      throw new InternalServerErrorException();
+    }
+  }
+
+  @Post('/login')
+  async login(
+    @Body(new TrimBodyPipe(), new JoiValidationPipe(loginAuthValidator))
+    loginAuthDto: ILoginAuth,
+  ) {
+    try {
+      return { accessToken: await this.authService.login(loginAuthDto) };
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException();
     }
   }
 
