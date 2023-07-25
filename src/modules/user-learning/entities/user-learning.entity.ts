@@ -10,16 +10,6 @@ import * as MongooseDelete from 'mongoose-delete';
 import { CollectionName } from 'src/commons/constants';
 import { BaseSchema } from 'src/commons/schema/base.schema';
 
-@Schema()
-export class Use {
-  @Prop()
-  ex: string;
-
-  @Prop()
-  grammar: string;
-}
-export const UseSchema = SchemaFactory.createForClass(Use);
-
 @Schema({ timestamps: true, collection: CollectionName.USER_LEARNINGS })
 export class UserLearning extends BaseSchema {
   id: ObjectId;

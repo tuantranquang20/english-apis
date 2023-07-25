@@ -10,6 +10,7 @@ export enum CollectionName {
 export const MAX_INTEGER = 2147483647;
 export const INPUT_TEXT_MAX_LENGTH = 255;
 export const LIMIT_PER_PAGE_DEFAULT = 10;
+export const MAX_PERCENTAGE = 100;
 
 export enum OrderDirection {
   ASC = 'asc',

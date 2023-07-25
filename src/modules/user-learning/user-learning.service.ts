@@ -1,24 +1,42 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { CollectionName } from '@src/commons/constants';
+import { SoftDeleteModel } from 'mongoose-delete';
+import { UserLearningDocument } from './entities/user-learning.entity';
+import {
+  ICreateUserLearning,
+  IUpdateUserLearning,
+} from './user-learning.interface';
 
 @Injectable()
 export class UserLearningService {
-  create(createUserLearningDto) {
-    return 'This action adds a new userLearning';
+  constructor(
+    @InjectModel(CollectionName.USER_LEARNINGS)
+    private model: SoftDeleteModel<UserLearningDocument>,
+  ) {}
+  async create(body: ICreateUserLearning) {
+    try {
+      const result = await this.model.create({
+        user: body.userId,
+        lesson: body.lessonId,
+        type: body.type,
+        percentage: body.percentage,
+      });
+      return result;
+    } catch (error) {
+      throw error;
+    }
   }
 
-  findAll() {
-    return `This action returns all userLearning`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} userLearning`;
-  }
-
-  update(id: number, updateUserLearningDto) {
-    return `This action updates a #${id} userLearning`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} userLearning`;
+  async update(id: string, body: IUpdateUserLearning) {
+    try {
+      const userLearning = await this.model.findByIdAndUpdate(id, body, {
+        new: true,
+        runValidators: true,
+      });
+      return userLearning;
+    } catch (error) {
+      throw error;
+    }
   }
 }
