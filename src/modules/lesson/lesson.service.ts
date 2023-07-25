@@ -137,4 +137,12 @@ export class LessonService {
       throw error;
     }
   }
+  async findOne(id: string) {
+    try {
+      const lesson = await this.model.findById(id);
+      return lesson;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

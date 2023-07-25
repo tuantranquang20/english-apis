@@ -6,35 +6,81 @@ import {
   Patch,
   Param,
   Delete,
+  InternalServerErrorException,
 } from '@nestjs/common';
+import { SuccessResponse } from '@src/commons/helpers/response';
+import { JoiValidationPipe, TrimBodyPipe } from '@src/commons/pipe';
+import { IdObjectSchema } from '@src/commons/utils/validator';
+import { ICreateReading, IUpdateReading } from './reading.interface';
 import { ReadingService } from './reading.service';
+import {
+  createReadingValidator,
+  updateReadingValidator,
+} from './reading.validator';
 
 @Controller('reading')
 export class ReadingController {
   constructor(private readonly readingService: ReadingService) {}
 
-  @Post()
-  create(@Body() createReadingDto) {
-    return this.readingService.create(createReadingDto);
+  @Post('/create')
+  async create(
+    @Body(new TrimBodyPipe(), new JoiValidationPipe(createReadingValidator))
+    createReadingDto: ICreateReading,
+  ) {
+    try {
+      const newReading = await this.readingService.create(createReadingDto);
+      return new SuccessResponse(newReading);
+    } catch (error) {
+      return new InternalServerErrorException(error);
+    }
   }
 
   @Get()
-  findAll() {
-    return this.readingService.findAll();
+  async findAll() {
+    try {
+      const readings = await this.readingService.findAll();
+      return new SuccessResponse(readings);
+    } catch (error) {
+      return new InternalServerErrorException();
+    }
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.readingService.findOne(+id);
+  async findOne(
+    @Param('id', new JoiValidationPipe(IdObjectSchema)) id: string,
+  ) {
+    try {
+      const reading = await this.readingService.findOne(id);
+      return new SuccessResponse(reading);
+    } catch (error) {
+      return new InternalServerErrorException();
+    }
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateReadingDto) {
-    return this.readingService.update(+id, updateReadingDto);
+  @Patch('/update/:id')
+  async update(
+    @Param('id', new JoiValidationPipe(IdObjectSchema)) id: string,
+    @Body(new TrimBodyPipe(), new JoiValidationPipe(updateReadingValidator))
+    updateReadingDto: IUpdateReading,
+  ) {
+    try {
+      const updateReading = await this.readingService.update(
+        id,
+        updateReadingDto,
+      );
+      return new SuccessResponse(updateReading);
+    } catch (error) {
+      return new InternalServerErrorException();
+    }
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.readingService.remove(+id);
+  async remove(@Param('id', new JoiValidationPipe(IdObjectSchema)) id: string) {
+    try {
+      const removeReading = await this.readingService.remove(id);
+      return new SuccessResponse(removeReading);
+    } catch (error) {
+      return new InternalServerErrorException(error);
+    }
   }
 }

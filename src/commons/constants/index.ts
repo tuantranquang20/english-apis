@@ -3,7 +3,7 @@ export enum CollectionName {
   LESSONS = 'lessons',
   GRAMMARS = 'grammars',
   LISTENINGS = 'listenings',
-  READINGS = 'lessons',
+  READINGS = 'readings',
   USER_LEARNINGS = 'user_learnings',
 }
 

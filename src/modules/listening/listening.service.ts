@@ -1,52 +1,49 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CollectionName } from '@src/commons/constants';
 import { SoftDeleteModel } from 'mongoose-delete';
+import { LessonService } from '../lesson/lesson.service';
 import { ListeningDocument } from './entities/listening.entity';
+import { ICreateListening, IUpdateListening } from './listening.interface';
 
 @Injectable()
 export class ListeningService {
   constructor(
     @InjectModel(CollectionName.LISTENINGS)
     private model: SoftDeleteModel<ListeningDocument>,
+    private readonly lessonService: LessonService,
   ) {}
-  async create(createListeningDto) {
-    try {
-      return 'This action adds a new listening';
-    } catch (error) {
-      throw error;
+  async create(createListeningDto: ICreateListening) {
+    const lesson = await this.lessonService.findOne(
+      createListeningDto.lesson.toString(),
+    );
+    if (!lesson) {
+      throw new UnauthorizedException('Thông tin không hợp lệ (lesson)');
     }
+    return await this.model.create(createListeningDto);
   }
 
   async findAll() {
-    try {
-      return `This action returns all listening`;
-    } catch (error) {
-      throw error;
-    }
+    return await this.model.find();
   }
 
-  async findOne(id: number) {
-    try {
-      return `This action returns a #${id} listening`;
-    } catch (error) {
-      throw error;
-    }
+  async findOne(id: string) {
+    return await this.model.findById(id);
   }
 
-  async update(id: number, updateListeningDto) {
-    try {
-      return `This action updates a #${id} listening`;
-    } catch (error) {
-      throw error;
-    }
+  async update(id: string, updateListeningDto: IUpdateListening) {
+    const listening = await this.model.findByIdAndUpdate(
+      id,
+      updateListeningDto,
+      {
+        new: true,
+        runValidators: true,
+      },
+    );
+    return listening;
   }
 
-  async remove(id: number) {
-    try {
-      return `This action removes a #${id} listening`;
-    } catch (error) {
-      throw error;
-    }
+  remove(id: string) {
+    return this.model.findByIdAndDelete(id);
   }
 }

@@ -1,24 +1,45 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { CollectionName } from '@src/commons/constants';
+import { SoftDeleteModel } from 'mongoose-delete';
+import { LessonService } from '../lesson/lesson.service';
+import { ReadingDocument } from './entities/reading.entity';
+import { ICreateReading, IUpdateReading } from './reading.interface';
 
 @Injectable()
 export class ReadingService {
-  create(createReadingDto) {
-    return 'This action adds a new reading';
+  constructor(
+    @InjectModel(CollectionName.READINGS)
+    private model: SoftDeleteModel<ReadingDocument>,
+    private readonly lessonService: LessonService,
+  ) {}
+  async create(createReadingDto: ICreateReading) {
+    const lesson = await this.lessonService.findOne(
+      createReadingDto.lesson.toString(),
+    );
+    if (!lesson) {
+      throw new UnauthorizedException('Thông tin không hợp lệ (lesson)');
+    }
+    return await this.model.create(createReadingDto);
   }
 
-  findAll() {
-    return `This action returns all reading`;
+  async findAll() {
+    return await this.model.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} reading`;
+  async findOne(id: string) {
+    return await this.model.findById(id);
   }
 
-  update(id: number, updateReadingDto) {
-    return `This action updates a #${id} reading`;
+  async update(id: string, updateReadingDto: IUpdateReading) {
+    const reading = await this.model.findByIdAndUpdate(id, updateReadingDto, {
+      new: true,
+      runValidators: true,
+    });
+    return reading;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} reading`;
+  remove(id: string) {
+    return this.model.findByIdAndDelete(id);
   }
 }
