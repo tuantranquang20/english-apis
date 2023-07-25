@@ -63,7 +63,10 @@ export class GrammarService {
         .limit(limit)
         .sort(sortOptions)
         .select('_id use know title');
-      return grammars;
+
+      const total = await this.model.find(filterOptions).count();
+
+      return [grammars, total];
     } catch (error) {
       throw error;
     }

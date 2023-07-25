@@ -42,12 +42,14 @@ export class UserService {
 
     const users = await this.model
       .find(filterOptions)
+      .sort(sortOptions)
       .skip(page)
       .limit(limit)
-      .sort(sortOptions)
-      .select('_id type name title');
+      .select('_id role username email');
 
-    return users;
+    const total = await this.model.find(filterOptions).count();
+
+    return [users, total];
   }
 
   async findOne(id: string) {

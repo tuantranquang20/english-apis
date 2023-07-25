@@ -56,8 +56,11 @@ export class GrammarController {
     query: IGrammarFilter,
   ) {
     try {
-      const grammars = await this.grammarService.findAll(query);
-      return new SuccessResponse(grammars);
+      const [data, total] = await this.grammarService.findAll(query);
+      return new SuccessResponse({
+        items: data,
+        totalItems: total,
+      });
     } catch (error) {
       throw new InternalServerErrorException();
     }

@@ -5,7 +5,7 @@ import { LessonType } from '../lesson/lesson.constant';
 
 export const createUserLearningValidator = Joi.object({
   userId: IdObjectSchema.required(),
-  lesson: IdObjectSchema.required(),
+  lessonId: IdObjectSchema.required(),
   percentage: Joi.number().max(MAX_PERCENTAGE).required(),
   type: Joi.string()
     .valid(...Object.values(LessonType))

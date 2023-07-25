@@ -52,8 +52,11 @@ export class UserController {
     query: IFilterBase,
   ) {
     try {
-      const users = await this.userService.findAll(query);
-      return new SuccessResponse(users);
+      const [data, total] = await this.userService.findAll(query);
+      return new SuccessResponse({
+        items: data,
+        totalItems: total,
+      });
     } catch (error) {
       throw new InternalServerErrorException();
     }
