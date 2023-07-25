@@ -4,6 +4,7 @@ import { UserLearningController } from './user-learning.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CollectionName } from '@src/commons/constants';
 import { UserLearningSchema } from './entities/user-learning.entity';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -12,6 +13,6 @@ import { UserLearningSchema } from './entities/user-learning.entity';
     ]),
   ],
   controllers: [UserLearningController],
-  providers: [UserLearningService],
+  providers: [UserLearningService, JwtService],
 })
 export class UserLearningModule {}

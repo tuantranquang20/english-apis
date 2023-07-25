@@ -21,7 +21,7 @@ export class UserLearning extends BaseSchema {
   })
   user: mongoose.Types.ObjectId;
 
-  @Prop()
+  @Prop({ required: true })
   type: LessonType;
 
   @Prop({

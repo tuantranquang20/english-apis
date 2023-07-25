@@ -26,6 +26,7 @@ import { updateUserValidator, userFilterValidator } from './user.validator';
 import { IUpdateUser } from './user.interface';
 import { IdObjectSchema } from '@src/commons/utils/validator';
 
+@UseGuards(AuthenticationGuard)
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -41,7 +42,7 @@ export class UserController {
   }
 
   @Roles('admin')
-  @UseGuards(AuthenticationGuard, RoleGuard)
+  @UseGuards(RoleGuard)
   @Get()
   async findAll(
     @Query(

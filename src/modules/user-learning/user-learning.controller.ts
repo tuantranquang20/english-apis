@@ -5,6 +5,7 @@ import {
   Patch,
   Param,
   InternalServerErrorException,
+  UseGuards,
 } from '@nestjs/common';
 import { UserLearningService } from './user-learning.service';
 import { JoiValidationPipe, TrimBodyPipe } from '@src/commons/pipe';
@@ -18,7 +19,9 @@ import {
 } from './user-learning.interface';
 import { IdObjectSchema } from '@src/commons/utils/validator';
 import { SuccessResponse } from '@src/commons/helpers/response';
+import { AuthenticationGuard } from '@src/guards/authentication.guard';
 
+@UseGuards(AuthenticationGuard)
 @Controller('user-learning')
 export class UserLearningController {
   constructor(private readonly userLearningService: UserLearningService) {}

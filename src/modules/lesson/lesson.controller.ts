@@ -8,6 +8,8 @@ import {
   Delete,
   InternalServerErrorException,
   Query,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { LessonService } from './lesson.service';
 import {
@@ -28,7 +30,9 @@ import {
 } from './lesson.validator';
 import { SuccessResponse } from '@src/commons/helpers/response';
 import { IdObjectSchema } from '@src/commons/utils/validator';
+import { AuthenticationGuard } from '@src/guards/authentication.guard';
 
+@UseGuards(AuthenticationGuard)
 @Controller('lesson')
 export class LessonController {
   constructor(private readonly lessonService: LessonService) {}
@@ -54,11 +58,13 @@ export class LessonController {
       new ModifyFilterQueryPipe(),
     )
     query: ILessonFilter,
+    @Req() req,
   ) {
     try {
-      const lessons = await this.lessonService.findAll(query);
+      const lessons = await this.lessonService.findAll(query, req?.user?.id);
       return new SuccessResponse(lessons);
     } catch (error) {
+      console.log(error);
       return new InternalServerErrorException();
     }
   }

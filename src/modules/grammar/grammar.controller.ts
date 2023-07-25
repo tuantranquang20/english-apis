@@ -8,6 +8,7 @@ import {
   Delete,
   InternalServerErrorException,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { GrammarService } from './grammar.service';
 import {
@@ -28,7 +29,9 @@ import {
 } from './grammar.interface';
 import { SuccessResponse } from '@src/commons/helpers/response';
 import { IdObjectSchema } from '@src/commons/utils/validator';
+import { AuthenticationGuard } from '@src/guards/authentication.guard';
 
+@UseGuards(AuthenticationGuard)
 @Controller('grammar')
 export class GrammarController {
   constructor(private readonly grammarService: GrammarService) {}

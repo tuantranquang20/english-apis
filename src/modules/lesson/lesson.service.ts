@@ -25,11 +25,10 @@ export class LessonService {
     }
   }
 
-  async findAll(query: ILessonFilter) {
+  async findAll(query: ILessonFilter, userId: string) {
     try {
       const { type, page, limit, orderBy, orderDirection, keyword } = query;
       const filterOptions: FilterQuery<Lesson> = {};
-
       if (type || keyword) {
         filterOptions.$and = [];
       }
@@ -56,11 +55,62 @@ export class LessonService {
       }
 
       const lessons = await this.model
-        .find(filterOptions)
+        .aggregate([
+          {
+            $addFields: {
+              id: { $toString: '$_id' },
+            },
+          },
+          {
+            $match: filterOptions,
+          },
+          {
+            $lookup: {
+              from: CollectionName.USER_LEARNINGS,
+              localField: 'id',
+              foreignField: 'lesson',
+              as: 'userLearning',
+              pipeline: [
+                {
+                  $match: {
+                    user: userId,
+                  },
+                },
+              ],
+            },
+          },
+          {
+            $unwind: {
+              path: '$userLearning',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $addFields: {
+              percentage: {
+                $cond: {
+                  if: { $ifNull: ['$userLearning', 0] },
+                  then: '$userLearning.percentage',
+                  else: 0,
+                },
+              },
+            },
+          },
+          {
+            $project: {
+              userLearning: 0,
+              deleted: 0,
+              createdAt: 0,
+              updatedAt: 0,
+              __v: 0,
+              id: 0,
+            },
+          },
+        ])
         .skip(page)
         .limit(limit)
-        .sort(sortOptions)
-        .select('_id type name title');
+        .sort(sortOptions);
+
       return lessons;
     } catch (error) {
       throw error;

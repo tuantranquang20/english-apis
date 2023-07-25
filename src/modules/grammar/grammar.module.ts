@@ -4,6 +4,7 @@ import { GrammarController } from './grammar.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CollectionName } from 'src/commons/constants';
 import { GrammarSchema } from './entities/grammar.entity';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -12,7 +13,7 @@ import { GrammarSchema } from './entities/grammar.entity';
     ]),
   ],
   controllers: [GrammarController],
-  providers: [GrammarService],
+  providers: [GrammarService, JwtService],
   exports: [GrammarService],
 })
 export class GrammarModule {}

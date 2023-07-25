@@ -4,6 +4,7 @@ import { LessonController } from './lesson.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CollectionName } from '@src/commons/constants';
 import { LessonSchema } from './entities/lesson.entity';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -12,6 +13,6 @@ import { LessonSchema } from './entities/lesson.entity';
     ]),
   ],
   controllers: [LessonController],
-  providers: [LessonService],
+  providers: [LessonService, JwtService],
 })
 export class LessonModule {}
