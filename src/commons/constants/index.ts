@@ -18,5 +18,10 @@ export enum OrderDirection {
 
 export enum Role {
   ADMIN = 'admin',
-  USER = 'USER',
+  USER = 'user',
+}
+
+export enum ListeningType {
+  SELECT_CELL = 'selectCell',
+  SELECT_WORD = 'selectWord',
 }

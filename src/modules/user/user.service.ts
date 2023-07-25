@@ -14,8 +14,9 @@ export class UserService {
     return await createdUser.save();
   }
 
-  findAll() {
-    return `This action returns all user`;
+  async findAll() {
+    const users = await this.model.find();
+    return users;
   }
 
   findOne(id: number) {
@@ -31,6 +32,9 @@ export class UserService {
   }
 
   async findByEmail(email: string) {
-    return await this.model.findOne({ email }).lean();
+    return await this.model
+      .findOne({ email })
+      .select('_id username email role password')
+      .lean();
   }
 }

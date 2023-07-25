@@ -7,10 +7,13 @@ import {
   Param,
   Delete,
   UseGuards,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { Roles } from 'src/commons/decorators/role.decorator';
 import { RoleGuard } from 'src/guards/authorization.guard';
+import { AuthenticationGuard } from '@src/guards/authentication.guard';
+import { SuccessResponse } from '@src/commons/helpers/response';
 
 @Controller('user')
 export class UserController {
@@ -22,10 +25,15 @@ export class UserController {
   }
 
   @Roles('admin')
-  @UseGuards(RoleGuard)
+  @UseGuards(AuthenticationGuard, RoleGuard)
   @Get()
-  profile() {
-    return this.userService.findAll();
+  async profile() {
+    try {
+      const users = await this.userService.findAll();
+      return new SuccessResponse(users);
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
   }
 
   @Get(':id')

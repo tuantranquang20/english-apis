@@ -9,8 +9,7 @@ export const createAuthValidator = Joi.object({
     })
     .required(),
   password: Joi.string().required(),
-  password_confirmation: Joi.ref('password'),
-}).with('password', 'password_confirmation');
+});
 
 export const loginAuthValidator = Joi.object({
   email: Joi.string()
