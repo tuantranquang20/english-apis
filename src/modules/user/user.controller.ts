@@ -31,8 +31,13 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  create(@Body() createUserDto) {
-    return this.userService.create(createUserDto);
+  async create(@Body() createUserDto) {
+    try {
+      const newUser = await this.userService.create(createUserDto);
+      return new SuccessResponse(newUser);
+    } catch (error) {
+      return new InternalServerErrorException();
+    }
   }
 
   @Roles('admin')
