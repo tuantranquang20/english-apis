@@ -12,6 +12,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { UserLearningModule } from './modules/user-learning/user-learning.module';
 import { APP_FILTER } from '@nestjs/core';
 import { InternalServerErrorFilter } from './commons/exeptions/exceptions.filter';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -21,6 +22,10 @@ import { InternalServerErrorFilter } from './commons/exeptions/exceptions.filter
       validationSchema: envSchema,
     }),
     MongooseModule.forRoot(process.env.URL_MONGOOSE),
+    JwtModule.register({
+      secret: process.env.JWT_ACCESS_TOKEN_SECRET_KEY,
+      signOptions: { expiresIn: '1h' },
+    }),
     UserModule,
     LessonModule,
     GrammarModule,

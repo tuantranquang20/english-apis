@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { ListeningService } from './listening.service';
 
@@ -14,27 +15,47 @@ export class ListeningController {
   constructor(private readonly listeningService: ListeningService) {}
 
   @Post()
-  create(@Body() createListeningDto) {
-    return this.listeningService.create(createListeningDto);
+  async create(@Body() createListeningDto) {
+    try {
+      return this.listeningService.create(createListeningDto);
+    } catch (error) {
+      return new InternalServerErrorException();
+    }
   }
 
   @Get()
-  findAll() {
-    return this.listeningService.findAll();
+  async findAll() {
+    try {
+      return this.listeningService.findAll();
+    } catch (error) {
+      return new InternalServerErrorException();
+    }
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.listeningService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    try {
+      return this.listeningService.findOne(+id);
+    } catch (error) {
+      return new InternalServerErrorException();
+    }
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateListeningDto) {
-    return this.listeningService.update(+id, updateListeningDto);
+  async update(@Param('id') id: string, @Body() updateListeningDto) {
+    try {
+      return this.listeningService.update(+id, updateListeningDto);
+    } catch (error) {
+      return new InternalServerErrorException();
+    }
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.listeningService.remove(+id);
+  async remove(@Param('id') id: string) {
+    try {
+      return this.listeningService.remove(+id);
+    } catch (error) {
+      return new InternalServerErrorException();
+    }
   }
 }

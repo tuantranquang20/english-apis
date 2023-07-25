@@ -1,40 +1,58 @@
 import {
   Controller,
-  Get,
   Post,
   Body,
   Patch,
   Param,
-  Delete,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { UserLearningService } from './user-learning.service';
+import { JoiValidationPipe, TrimBodyPipe } from '@src/commons/pipe';
+import {
+  createUserLearningValidator,
+  updateUserLearningValidator,
+} from './user-learning.validator';
+import {
+  ICreateUserLearning,
+  IUpdateUserLearning,
+} from './user-learning.interface';
+import { IdObjectSchema } from '@src/commons/utils/validator';
+import { SuccessResponse } from '@src/commons/helpers/response';
 
 @Controller('user-learning')
 export class UserLearningController {
   constructor(private readonly userLearningService: UserLearningService) {}
 
   @Post()
-  create(@Body() createUserLearningDto) {
-    return this.userLearningService.create(createUserLearningDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.userLearningService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userLearningService.findOne(+id);
+  async create(
+    @Body(
+      new TrimBodyPipe(),
+      new JoiValidationPipe(createUserLearningValidator),
+    )
+    body: ICreateUserLearning,
+  ) {
+    try {
+      const newUserLearning = await this.userLearningService.create(body);
+      return new SuccessResponse(newUserLearning);
+    } catch (error) {
+      return new InternalServerErrorException();
+    }
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserLearningDto) {
-    return this.userLearningService.update(+id, updateUserLearningDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userLearningService.remove(+id);
+  async update(
+    @Param('id', new JoiValidationPipe(IdObjectSchema)) id: string,
+    @Body(
+      new TrimBodyPipe(),
+      new JoiValidationPipe(updateUserLearningValidator),
+    )
+    body: IUpdateUserLearning,
+  ) {
+    try {
+      const userLearning = await this.userLearningService.update(id, body);
+      return new SuccessResponse(userLearning);
+    } catch (error) {
+      return new InternalServerErrorException();
+    }
   }
 }

@@ -21,7 +21,7 @@ export class AuthenticationGuard implements CanActivate {
     if (!token) {
       throw new UnauthorizedException();
     }
-    request.loginUser = await this.validateToken(token);
+    request.user = await this.validateToken(token);
     return true;
   }
 
