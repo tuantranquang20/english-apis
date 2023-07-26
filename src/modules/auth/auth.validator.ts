@@ -1,3 +1,4 @@
+import { Role } from '@src/commons/constants';
 import Joi from '@src/commons/plugins/joi';
 
 export const createAuthValidator = Joi.object({
@@ -9,6 +10,7 @@ export const createAuthValidator = Joi.object({
     })
     .required(),
   password: Joi.string().required(),
+  role: Joi.string().valid(...Object.values(Role)),
 });
 
 export const loginAuthValidator = Joi.object({

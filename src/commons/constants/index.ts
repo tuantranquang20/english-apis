@@ -3,7 +3,7 @@ export enum CollectionName {
   LESSONS = 'lessons',
   GRAMMARS = 'grammars',
   LISTENINGS = 'listenings',
-  READINGS = 'lessons',
+  READINGS = 'readings',
   USER_LEARNINGS = 'user_learnings',
 }
 
@@ -20,9 +20,4 @@ export enum OrderDirection {
 export enum Role {
   ADMIN = 'admin',
   USER = 'user',
-}
-
-export enum ListeningType {
-  SELECT_CELL = 'selectCell',
-  SELECT_WORD = 'selectWord',
 }

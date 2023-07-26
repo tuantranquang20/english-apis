@@ -59,7 +59,8 @@ export class UserController {
         totalItems: total,
       });
     } catch (error) {
-      throw new InternalServerErrorException();
+      console.log(error);
+      throw new InternalServerErrorException(error);
     }
   }
 
@@ -73,6 +74,8 @@ export class UserController {
     }
   }
 
+  @Roles('admin')
+  @UseGuards(AuthenticationGuard, RoleGuard)
   @Patch(':id')
   async update(
     @Param('id', new JoiValidationPipe(IdObjectSchema)) id: string,
@@ -87,6 +90,8 @@ export class UserController {
     }
   }
 
+  @Roles('admin')
+  @UseGuards(AuthenticationGuard, RoleGuard)
   @Delete(':id')
   async remove(@Param('id', new JoiValidationPipe(IdObjectSchema)) id: string) {
     try {

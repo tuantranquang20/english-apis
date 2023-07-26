@@ -4,7 +4,8 @@ export interface ICreateAuth {
   username: string;
   email: string;
   password: string;
-  password_confirmation: string;
+  // password_confirmation: string;
+  role?: Role;
 }
 export interface ILoginAuth {
   email: string;
