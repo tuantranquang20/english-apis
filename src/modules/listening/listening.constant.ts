@@ -1,3 +1,4 @@
 export enum ListeningType {
-  SELECTWORD = 'selectWord',
+  SELECT_WORD = 'selectWord',
+  SELECT_CELL = 'selectCell',
 }

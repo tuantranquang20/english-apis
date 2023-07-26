@@ -21,8 +21,3 @@ export enum Role {
   ADMIN = 'admin',
   USER = 'user',
 }
-
-export enum ListeningType {
-  SELECT_CELL = 'selectCell',
-  SELECT_WORD = 'selectWord',
-}
