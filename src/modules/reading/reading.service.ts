@@ -1,9 +1,10 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { CollectionName } from '@src/commons/constants';
+import { CollectionName, OrderDirection } from '@src/commons/constants';
+import { FilterQuery } from 'mongoose';
 import { SoftDeleteModel } from 'mongoose-delete';
 import { LessonService } from '../lesson/lesson.service';
-import { ReadingDocument } from './entities/reading.entity';
+import { Reading, ReadingDocument } from './entities/reading.entity';
 import { ICreateReading, IUpdateReading } from './reading.interface';
 
 @Injectable()
@@ -23,8 +24,35 @@ export class ReadingService {
     return await this.model.create(createReadingDto);
   }
 
-  async findAll() {
-    return await this.model.find();
+  async findAll(query: any) {
+    try {
+      const { page, limit, orderBy, orderDirection, keyword } = query;
+      const filterOptions: FilterQuery<Reading> = {};
+
+      if (keyword) {
+        filterOptions.$and = [];
+        filterOptions.$and.push({
+          $or: [
+            {
+              word: { $regex: new RegExp(keyword, 'i') },
+            },
+          ],
+        });
+      }
+
+      const sortOptions = {};
+      if (orderBy) {
+        sortOptions[orderBy] = orderDirection === OrderDirection.DESC ? -1 : 1;
+      }
+      const readings = await this.model
+        .find(filterOptions)
+        .skip(page)
+        .limit(limit)
+        .sort(sortOptions);
+      return readings;
+    } catch (error) {
+      throw error;
+    }
   }
 
   async findOne(id: string) {

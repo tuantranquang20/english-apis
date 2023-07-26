@@ -7,14 +7,21 @@ import {
   Param,
   Delete,
   InternalServerErrorException,
+  Query,
 } from '@nestjs/common';
 import { SuccessResponse } from '@src/commons/helpers/response';
-import { JoiValidationPipe, TrimBodyPipe } from '@src/commons/pipe';
+import {
+  JoiValidationPipe,
+  ModifyFilterQueryPipe,
+  RemoveEmptyQueryPipe,
+  TrimBodyPipe,
+} from '@src/commons/pipe';
 import { IdObjectSchema } from '@src/commons/utils/validator';
 import { ICreateReading, IUpdateReading } from './reading.interface';
 import { ReadingService } from './reading.service';
 import {
   createReadingValidator,
+  readingFilterValidator,
   updateReadingValidator,
 } from './reading.validator';
 
@@ -36,9 +43,16 @@ export class ReadingController {
   }
 
   @Get()
-  async findAll() {
+  async findAll(
+    @Query(
+      new RemoveEmptyQueryPipe(),
+      new JoiValidationPipe(readingFilterValidator),
+      new ModifyFilterQueryPipe(),
+    )
+    query: any,
+  ) {
     try {
-      const readings = await this.readingService.findAll();
+      const readings = await this.readingService.findAll(query);
       return new SuccessResponse(readings);
     } catch (error) {
       return new InternalServerErrorException();

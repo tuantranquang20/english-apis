@@ -1,9 +1,10 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { CollectionName } from '@src/commons/constants';
+import { CollectionName, OrderDirection } from '@src/commons/constants';
+import { FilterQuery } from 'mongoose';
 import { SoftDeleteModel } from 'mongoose-delete';
 import { LessonService } from '../lesson/lesson.service';
-import { ListeningDocument } from './entities/listening.entity';
+import { ListeningDocument, Listening } from './entities/listening.entity';
 import { ICreateListening, IUpdateListening } from './listening.interface';
 
 @Injectable()
@@ -23,8 +24,41 @@ export class ListeningService {
     return await this.model.create(createListeningDto);
   }
 
-  async findAll() {
-    return await this.model.find();
+  async findAll(query: any) {
+    try {
+      const { type, page, limit, orderBy, orderDirection, keyword } = query;
+      const filterOptions: FilterQuery<Listening> = {};
+
+      if (type || keyword) {
+        filterOptions.$and = [];
+      }
+      if (type) {
+        filterOptions.$and.push({
+          type,
+        });
+      }
+      if (keyword) {
+        filterOptions.$and.push({
+          $or: [
+            {
+              question: { $regex: new RegExp(keyword, 'i') },
+            },
+          ],
+        });
+      }
+      const sortOptions = {};
+      if (orderBy) {
+        sortOptions[orderBy] = orderDirection === OrderDirection.DESC ? -1 : 1;
+      }
+      const listenings = await this.model
+        .find(filterOptions)
+        .skip(page)
+        .limit(limit)
+        .sort(sortOptions);
+      return listenings;
+    } catch (error) {
+      throw error;
+    }
   }
 
   async findOne(id: string) {

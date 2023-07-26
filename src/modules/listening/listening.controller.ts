@@ -7,14 +7,21 @@ import {
   Param,
   Delete,
   InternalServerErrorException,
+  Query,
 } from '@nestjs/common';
 import { SuccessResponse } from '@src/commons/helpers/response';
-import { JoiValidationPipe, TrimBodyPipe } from '@src/commons/pipe';
+import {
+  JoiValidationPipe,
+  ModifyFilterQueryPipe,
+  RemoveEmptyQueryPipe,
+  TrimBodyPipe,
+} from '@src/commons/pipe';
 import { IdObjectSchema } from '@src/commons/utils/validator';
 import { ICreateListening, IUpdateListening } from './listening.interface';
 import { ListeningService } from './listening.service';
 import {
   createListeningValidator,
+  listeningFilterValidator,
   updateListeningValidator,
 } from './listening.validator';
 
@@ -36,9 +43,16 @@ export class ListeningController {
   }
 
   @Get()
-  async findAll() {
+  async findAll(
+    @Query(
+      new RemoveEmptyQueryPipe(),
+      new JoiValidationPipe(listeningFilterValidator),
+      new ModifyFilterQueryPipe(),
+    )
+    query: any,
+  ) {
     try {
-      const listenings = await this.listeningService.findAll();
+      const listenings = await this.listeningService.findAll(query);
       return new SuccessResponse(listenings);
     } catch (error) {
       return new InternalServerErrorException();

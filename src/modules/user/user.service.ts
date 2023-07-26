@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { User, UserDocument } from './entities/user.entity';
 import { InjectModel } from '@nestjs/mongoose';
-import { CollectionName, OrderDirection } from '@src/commons/constants';
+import { CollectionName, OrderDirection, Role } from '@src/commons/constants';
 import { SoftDeleteModel } from 'mongoose-delete';
 import { IFilterBase } from '@src/commons/interfaces/common.interface';
 import { FilterQuery } from 'mongoose';
@@ -20,9 +20,10 @@ export class UserService {
   async findAll(query: IFilterBase) {
     const { page, limit, orderBy, orderDirection, keyword } = query;
     const filterOptions: FilterQuery<User> = {};
-    if (keyword) {
-      filterOptions.$and = [];
-    }
+    filterOptions.$and = [];
+    filterOptions.$and.push({
+      role: Role.USER,
+    });
     if (keyword) {
       filterOptions.$and.push({
         $or: [
