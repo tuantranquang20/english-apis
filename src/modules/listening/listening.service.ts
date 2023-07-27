@@ -5,7 +5,11 @@ import { FilterQuery } from 'mongoose';
 import { SoftDeleteModel } from 'mongoose-delete';
 import { LessonService } from '../lesson/lesson.service';
 import { ListeningDocument, Listening } from './entities/listening.entity';
-import { ICreateListening, IUpdateListening } from './listening.interface';
+import {
+  ICreateListening,
+  IListeningFilter,
+  IUpdateListening,
+} from './listening.interface';
 
 @Injectable()
 export class ListeningService {
@@ -24,12 +28,13 @@ export class ListeningService {
     return await this.model.create(createListeningDto);
   }
 
-  async findAll(query: any) {
+  async findAll(query: IListeningFilter) {
     try {
-      const { page, limit, orderBy, orderDirection, keyword, lessonId } = query;
+      const { type, page, limit, orderBy, orderDirection, keyword, lessonId } =
+        query;
       const filterOptions: FilterQuery<Listening> = {};
 
-      if (lessonId || keyword) {
+      if (type || keyword || lessonId) {
         filterOptions.$and = [];
       }
 
@@ -38,7 +43,11 @@ export class ListeningService {
           lesson: lessonId,
         });
       }
-
+      if (type) {
+        filterOptions.$and.push({
+          lesson: lessonId,
+        });
+      }
       if (keyword) {
         filterOptions.$and.push({
           $or: [
@@ -57,7 +66,6 @@ export class ListeningService {
         .skip(page)
         .limit(limit)
         .sort(sortOptions);
-
       const total = await this.model.find(filterOptions).count();
       return [listenings, total];
     } catch (error) {

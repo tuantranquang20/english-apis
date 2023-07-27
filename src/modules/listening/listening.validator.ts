@@ -28,4 +28,7 @@ export const updateListeningValidator = Joi.object({
 export const listeningFilterValidator = Joi.object({
   ...baseFilterSchema,
   lessonId: IdObjectSchema.required(),
+  type: Joi.string()
+    .valid(...Object.values(ListeningType))
+    .optional(),
 });

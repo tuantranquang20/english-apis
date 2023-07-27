@@ -61,8 +61,14 @@ export class LessonController {
     @Req() req,
   ) {
     try {
-      const lessons = await this.lessonService.findAll(query, req?.user?.id);
-      return new SuccessResponse(lessons);
+      const [data, total] = await this.lessonService.findAll(
+        query,
+        req?.user?.id,
+      );
+      return new SuccessResponse({
+        data,
+        totalItems: total,
+      });
     } catch (error) {
       return new InternalServerErrorException();
     }
