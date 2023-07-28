@@ -1,3 +1,4 @@
+import { IFilterBase } from '@src/commons/interfaces/common.interface';
 import { type ObjectId } from 'mongoose';
 
 export interface ICreateReading {
@@ -13,4 +14,8 @@ export interface IUpdateReading {
   pronunciation?: string;
   translateWord?: string;
   word?: string;
+}
+
+export interface IReadingFilter extends IFilterBase {
+  lessonId: string;
 }

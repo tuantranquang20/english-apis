@@ -78,7 +78,7 @@ export class ListeningController {
     }
   }
 
-  @Patch('/:id')
+  @Patch(':id')
   async update(
     @Param('id', new JoiValidationPipe(IdObjectSchema)) id: string,
     @Body(new TrimBodyPipe(), new JoiValidationPipe(updateListeningValidator))

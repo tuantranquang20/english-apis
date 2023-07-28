@@ -5,7 +5,11 @@ import { FilterQuery } from 'mongoose';
 import { SoftDeleteModel } from 'mongoose-delete';
 import { LessonService } from '../lesson/lesson.service';
 import { Reading, ReadingDocument } from './entities/reading.entity';
-import { ICreateReading, IUpdateReading } from './reading.interface';
+import {
+  ICreateReading,
+  IReadingFilter,
+  IUpdateReading,
+} from './reading.interface';
 
 @Injectable()
 export class ReadingService {
@@ -24,7 +28,7 @@ export class ReadingService {
     return await this.model.create(createReadingDto);
   }
 
-  async findAll(query: any) {
+  async findAll(query: IReadingFilter) {
     try {
       const { page, limit, orderBy, orderDirection, keyword, lessonId } = query;
       const filterOptions: FilterQuery<Reading> = {};
