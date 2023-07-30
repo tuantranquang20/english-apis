@@ -26,11 +26,20 @@ export class ReadingService {
 
   async findAll(query: any) {
     try {
-      const { page, limit, orderBy, orderDirection, keyword } = query;
+      const { page, limit, orderBy, orderDirection, keyword, lessonId } = query;
       const filterOptions: FilterQuery<Reading> = {};
 
-      if (keyword) {
+      if (lessonId || keyword) {
         filterOptions.$and = [];
+      }
+
+      if (lessonId) {
+        filterOptions.$and.push({
+          lesson: lessonId,
+        });
+      }
+
+      if (keyword) {
         filterOptions.$and.push({
           $or: [
             {
@@ -49,7 +58,10 @@ export class ReadingService {
         .skip(page)
         .limit(limit)
         .sort(sortOptions);
-      return readings;
+
+      const total = await this.model.find(filterOptions).count();
+
+      return [readings, total];
     } catch (error) {
       throw error;
     }
@@ -67,7 +79,7 @@ export class ReadingService {
     return reading;
   }
 
-  remove(id: string) {
-    return this.model.findByIdAndDelete(id);
+  async remove(id: string) {
+    return await this.model.findByIdAndDelete(id);
   }
 }

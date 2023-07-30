@@ -2,22 +2,14 @@ import {
   Controller,
   Post,
   Body,
-  Patch,
-  Param,
   InternalServerErrorException,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { UserLearningService } from './user-learning.service';
 import { JoiValidationPipe, TrimBodyPipe } from '@src/commons/pipe';
-import {
-  createUserLearningValidator,
-  updateUserLearningValidator,
-} from './user-learning.validator';
-import {
-  ICreateUserLearning,
-  IUpdateUserLearning,
-} from './user-learning.interface';
-import { IdObjectSchema } from '@src/commons/utils/validator';
+import { createUserLearningValidator } from './user-learning.validator';
+import { ICreateUserLearning } from './user-learning.interface';
 import { SuccessResponse } from '@src/commons/helpers/response';
 import { AuthenticationGuard } from '@src/guards/authentication.guard';
 
@@ -33,28 +25,16 @@ export class UserLearningController {
       new JoiValidationPipe(createUserLearningValidator),
     )
     body: ICreateUserLearning,
+    @Req() req,
   ) {
     try {
-      const newUserLearning = await this.userLearningService.create(body);
+      const newUserLearning = await this.userLearningService.create({
+        ...body,
+        userId: req?.user?.id,
+      });
       return new SuccessResponse(newUserLearning);
     } catch (error) {
-      return new InternalServerErrorException();
-    }
-  }
-
-  @Patch(':id')
-  async update(
-    @Param('id', new JoiValidationPipe(IdObjectSchema)) id: string,
-    @Body(
-      new TrimBodyPipe(),
-      new JoiValidationPipe(updateUserLearningValidator),
-    )
-    body: IUpdateUserLearning,
-  ) {
-    try {
-      const userLearning = await this.userLearningService.update(id, body);
-      return new SuccessResponse(userLearning);
-    } catch (error) {
+      console.log(error)
       return new InternalServerErrorException();
     }
   }

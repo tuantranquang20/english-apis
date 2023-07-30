@@ -1,6 +1,6 @@
 import { INPUT_TEXT_MAX_LENGTH } from '@src/commons/constants';
 import Joi from '@src/commons/plugins/joi';
-import { baseFilterSchema } from '@src/commons/utils/validator';
+import { IdObjectSchema, baseFilterSchema } from '@src/commons/utils/validator';
 
 export const createReadingValidator = Joi.object({
   lesson: Joi.isObjectId().required(),
@@ -20,4 +20,5 @@ export const updateReadingValidator = Joi.object({
 
 export const readingFilterValidator = Joi.object({
   ...baseFilterSchema,
+  lessonId: IdObjectSchema.required(),
 });

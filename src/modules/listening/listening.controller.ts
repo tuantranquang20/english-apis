@@ -29,7 +29,7 @@ import {
 export class ListeningController {
   constructor(private readonly listeningService: ListeningService) {}
 
-  @Post('create')
+  @Post()
   async create(
     @Body(new TrimBodyPipe(), new JoiValidationPipe(createListeningValidator))
     createListeningDto: ICreateListening,
@@ -52,8 +52,11 @@ export class ListeningController {
     query: any,
   ) {
     try {
-      const listenings = await this.listeningService.findAll(query);
-      return new SuccessResponse(listenings);
+      const [data, total] = await this.listeningService.findAll(query);
+      return new SuccessResponse({
+        items: data,
+        totalItems: total,
+      });
     } catch (error) {
       return new InternalServerErrorException();
     }
@@ -71,7 +74,7 @@ export class ListeningController {
     }
   }
 
-  @Patch('/update/:id')
+  @Patch('/:id')
   async update(
     @Param('id', new JoiValidationPipe(IdObjectSchema)) id: string,
     @Body(new TrimBodyPipe(), new JoiValidationPipe(updateListeningValidator))

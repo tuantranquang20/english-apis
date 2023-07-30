@@ -26,17 +26,19 @@ export class ListeningService {
 
   async findAll(query: any) {
     try {
-      const { type, page, limit, orderBy, orderDirection, keyword } = query;
+      const { page, limit, orderBy, orderDirection, keyword, lessonId } = query;
       const filterOptions: FilterQuery<Listening> = {};
 
-      if (type || keyword) {
+      if (lessonId || keyword) {
         filterOptions.$and = [];
       }
-      if (type) {
+
+      if (lessonId) {
         filterOptions.$and.push({
-          type,
+          lesson: lessonId,
         });
       }
+
       if (keyword) {
         filterOptions.$and.push({
           $or: [
@@ -55,7 +57,9 @@ export class ListeningService {
         .skip(page)
         .limit(limit)
         .sort(sortOptions);
-      return listenings;
+
+      const total = await this.model.find(filterOptions).count();
+      return [listenings, total];
     } catch (error) {
       throw error;
     }
@@ -77,7 +81,7 @@ export class ListeningService {
     return listening;
   }
 
-  remove(id: string) {
-    return this.model.findByIdAndDelete(id);
+  async remove(id: string) {
+    return await this.model.findByIdAndDelete(id);
   }
 }
