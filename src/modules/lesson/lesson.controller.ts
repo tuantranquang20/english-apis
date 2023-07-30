@@ -64,7 +64,6 @@ export class LessonController {
       const lessons = await this.lessonService.findAll(query, req?.user?.id);
       return new SuccessResponse(lessons);
     } catch (error) {
-      console.log(error);
       return new InternalServerErrorException();
     }
   }

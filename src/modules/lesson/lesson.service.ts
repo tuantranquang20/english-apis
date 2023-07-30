@@ -53,7 +53,6 @@ export class LessonService {
       if (orderBy) {
         sortOptions[orderBy] = orderDirection === OrderDirection.DESC ? -1 : 1;
       }
-
       const lessons = await this.model
         .aggregate([
           {

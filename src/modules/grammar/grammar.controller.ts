@@ -31,11 +31,11 @@ import { SuccessResponse } from '@src/commons/helpers/response';
 import { IdObjectSchema } from '@src/commons/utils/validator';
 import { AuthenticationGuard } from '@src/guards/authentication.guard';
 
-@UseGuards(AuthenticationGuard)
 @Controller('grammar')
 export class GrammarController {
   constructor(private readonly grammarService: GrammarService) {}
 
+  @UseGuards(AuthenticationGuard)
   @Post()
   async create(
     @Body(new TrimBodyPipe(), new JoiValidationPipe(createGrammarValidator))
@@ -69,6 +69,7 @@ export class GrammarController {
     }
   }
 
+  @UseGuards(AuthenticationGuard)
   @Patch(':id')
   async update(
     @Param('id') id: string,
@@ -83,6 +84,7 @@ export class GrammarController {
     }
   }
 
+  @UseGuards(AuthenticationGuard)
   @Delete(':id')
   async remove(@Param('id', new JoiValidationPipe(IdObjectSchema)) id: string) {
     try {

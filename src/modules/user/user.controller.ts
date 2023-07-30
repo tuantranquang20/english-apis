@@ -41,7 +41,6 @@ export class UserController {
     }
   }
 
-  @Roles('admin')
   @UseGuards(RoleGuard)
   @Get()
   async findAll(
@@ -74,8 +73,7 @@ export class UserController {
     }
   }
 
-  @Roles('admin')
-  @UseGuards(AuthenticationGuard, RoleGuard)
+  @UseGuards(AuthenticationGuard)
   @Patch(':id')
   async update(
     @Param('id', new JoiValidationPipe(IdObjectSchema)) id: string,

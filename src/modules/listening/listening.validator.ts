@@ -1,6 +1,6 @@
 import { INPUT_TEXT_MAX_LENGTH } from '@src/commons/constants';
 import Joi from '@src/commons/plugins/joi';
-import { baseFilterSchema } from '@src/commons/utils/validator';
+import { IdObjectSchema, baseFilterSchema } from '@src/commons/utils/validator';
 import { ListeningType } from './listening.constant';
 
 export const createListeningValidator = Joi.object({
@@ -27,7 +27,5 @@ export const updateListeningValidator = Joi.object({
 
 export const listeningFilterValidator = Joi.object({
   ...baseFilterSchema,
-  type: Joi.string()
-    .valid(...Object.values(ListeningType))
-    .required(),
+  lessonId: IdObjectSchema.required(),
 });

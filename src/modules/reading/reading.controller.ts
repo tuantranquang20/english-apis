@@ -29,7 +29,7 @@ import {
 export class ReadingController {
   constructor(private readonly readingService: ReadingService) {}
 
-  @Post('/create')
+  @Post()
   async create(
     @Body(new TrimBodyPipe(), new JoiValidationPipe(createReadingValidator))
     createReadingDto: ICreateReading,
@@ -52,8 +52,11 @@ export class ReadingController {
     query: any,
   ) {
     try {
-      const readings = await this.readingService.findAll(query);
-      return new SuccessResponse(readings);
+      const [data, total] = await this.readingService.findAll(query);
+      return new SuccessResponse({
+        items: data,
+        totalItems: total,
+      });
     } catch (error) {
       return new InternalServerErrorException();
     }
@@ -71,7 +74,7 @@ export class ReadingController {
     }
   }
 
-  @Patch('/update/:id')
+  @Patch(':id')
   async update(
     @Param('id', new JoiValidationPipe(IdObjectSchema)) id: string,
     @Body(new TrimBodyPipe(), new JoiValidationPipe(updateReadingValidator))

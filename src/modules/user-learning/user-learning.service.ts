@@ -5,7 +5,6 @@ import { SoftDeleteModel } from 'mongoose-delete';
 import { UserLearningDocument } from './entities/user-learning.entity';
 import {
   ICreateUserLearning,
-  IUpdateUserLearning,
 } from './user-learning.interface';
 
 @Injectable()
@@ -16,25 +15,35 @@ export class UserLearningService {
   ) {}
   async create(body: ICreateUserLearning) {
     try {
-      const result = await this.model.create({
+      const userLearning = await this.model.findOne({
         user: body.userId,
         lesson: body.lessonId,
         type: body.type,
-        percentage: body.percentage,
       });
+      let result = {};
+      if (userLearning) {
+        result = await this.model.findByIdAndUpdate(
+          userLearning?.id,
+          {
+            user: body.userId,
+            lesson: body.lessonId,
+            type: body.type,
+            percentage: body.percentage,
+          },
+          {
+            new: true,
+            runValidators: true,
+          },
+        );
+      } else {
+        result = await this.model.create({
+          user: body.userId,
+          lesson: body.lessonId,
+          type: body.type,
+          percentage: body.percentage,
+        });
+      }
       return result;
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async update(id: string, body: IUpdateUserLearning) {
-    try {
-      const userLearning = await this.model.findByIdAndUpdate(id, body, {
-        new: true,
-        runValidators: true,
-      });
-      return userLearning;
     } catch (error) {
       throw error;
     }
