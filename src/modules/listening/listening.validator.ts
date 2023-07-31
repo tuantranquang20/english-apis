@@ -4,7 +4,7 @@ import { IdObjectSchema, baseFilterSchema } from '@src/commons/utils/validator';
 import { ListeningType } from './listening.constant';
 
 export const createListeningValidator = Joi.object({
-  lesson: Joi.isObjectId().required(),
+  lessonId: Joi.isObjectId().required(),
   type: Joi.string()
     .valid(...Object.values(ListeningType))
     .required(),
@@ -15,7 +15,7 @@ export const createListeningValidator = Joi.object({
 });
 
 export const updateListeningValidator = Joi.object({
-  lesson: Joi.isObjectId().optional(),
+  lessonId: Joi.isObjectId().optional(),
   type: Joi.string()
     .valid(...Object.values(ListeningType))
     .optional(),

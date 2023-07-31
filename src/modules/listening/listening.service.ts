@@ -19,13 +19,18 @@ export class ListeningService {
     private readonly lessonService: LessonService,
   ) {}
   async create(createListeningDto: ICreateListening) {
+    const listening = {
+      ...createListeningDto,
+      lesson: createListeningDto.lessonId,
+    };
+    delete listening.lessonId;
     const lesson = await this.lessonService.findOne(
-      createListeningDto.lesson.toString(),
+      listening.lesson.toString(),
     );
     if (!lesson) {
       throw new UnauthorizedException('Thông tin không hợp lệ (lesson)');
     }
-    return await this.model.create(createListeningDto);
+    return await this.model.create(listening);
   }
 
   async findAll(query: IListeningFilter) {
@@ -45,7 +50,7 @@ export class ListeningService {
       }
       if (type) {
         filterOptions.$and.push({
-          lesson: lessonId,
+          type,
         });
       }
       if (keyword) {

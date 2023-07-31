@@ -39,8 +39,10 @@ export class ListeningController {
     createListeningDto: ICreateListening,
   ) {
     try {
-      const newReading = await this.listeningService.create(createListeningDto);
-      return new SuccessResponse(newReading);
+      const newListening = await this.listeningService.create(
+        createListeningDto,
+      );
+      return new SuccessResponse(newListening);
     } catch (error) {
       return new InternalServerErrorException(error);
     }

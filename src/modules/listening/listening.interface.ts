@@ -3,7 +3,7 @@ import { IFilterBase } from '@src/commons/interfaces/common.interface';
 
 export interface ICreateListening {
   type: ListeningType;
-  lesson: string;
+  lessonId: string;
   answer: string;
   question: string;
   words: Array<string>;
@@ -12,7 +12,7 @@ export interface ICreateListening {
 
 export interface IUpdateListening {
   type?: ListeningType;
-  lesson?: string;
+  lessonId?: string;
   answer?: string;
   question?: string;
   words?: Array<string>;
