@@ -17,7 +17,11 @@ import {
   TrimBodyPipe,
 } from '@src/commons/pipe';
 import { IdObjectSchema } from '@src/commons/utils/validator';
-import { ICreateListening, IUpdateListening } from './listening.interface';
+import {
+  ICreateListening,
+  IListeningFilter,
+  IUpdateListening,
+} from './listening.interface';
 import { ListeningService } from './listening.service';
 import {
   createListeningValidator,
@@ -35,8 +39,10 @@ export class ListeningController {
     createListeningDto: ICreateListening,
   ) {
     try {
-      const newReading = await this.listeningService.create(createListeningDto);
-      return new SuccessResponse(newReading);
+      const newListening = await this.listeningService.create(
+        createListeningDto,
+      );
+      return new SuccessResponse(newListening);
     } catch (error) {
       return new InternalServerErrorException(error);
     }
@@ -49,7 +55,7 @@ export class ListeningController {
       new JoiValidationPipe(listeningFilterValidator),
       new ModifyFilterQueryPipe(),
     )
-    query: any,
+    query: IListeningFilter,
   ) {
     try {
       const [data, total] = await this.listeningService.findAll(query);
@@ -74,7 +80,7 @@ export class ListeningController {
     }
   }
 
-  @Patch('/:id')
+  @Patch(':id')
   async update(
     @Param('id', new JoiValidationPipe(IdObjectSchema)) id: string,
     @Body(new TrimBodyPipe(), new JoiValidationPipe(updateListeningValidator))

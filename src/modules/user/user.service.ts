@@ -20,11 +20,8 @@ export class UserService {
   async findAll(query: IFilterBase) {
     const { page, limit, orderBy, orderDirection, keyword } = query;
     const filterOptions: FilterQuery<User> = {};
-    filterOptions.$and = [];
-    filterOptions.$and.push({
-      role: Role.USER,
-    });
     if (keyword) {
+      filterOptions.$and = [];
       filterOptions.$and.push({
         $or: [
           {

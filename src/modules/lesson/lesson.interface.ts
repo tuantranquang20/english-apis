@@ -8,7 +8,6 @@ export interface ICreateLesson {
 }
 
 export interface IUpdateLesson {
-  type?: LessonType;
   name?: string;
   title?: string;
 }

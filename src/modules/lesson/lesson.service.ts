@@ -109,8 +109,8 @@ export class LessonService {
         .skip(page)
         .limit(limit)
         .sort(sortOptions);
-
-      return lessons;
+      const total = await this.model.find(filterOptions).count();
+      return [lessons, total];
     } catch (error) {
       throw error;
     }

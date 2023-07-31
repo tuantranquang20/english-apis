@@ -45,9 +45,6 @@ export class GrammarService {
         filterOptions.$and.push({
           $or: [
             {
-              name: { $regex: new RegExp(keyword, 'i') },
-            },
-            {
               title: { $regex: new RegExp(keyword, 'i') },
             },
           ],

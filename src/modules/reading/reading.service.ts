@@ -5,7 +5,11 @@ import { FilterQuery } from 'mongoose';
 import { SoftDeleteModel } from 'mongoose-delete';
 import { LessonService } from '../lesson/lesson.service';
 import { Reading, ReadingDocument } from './entities/reading.entity';
-import { ICreateReading, IUpdateReading } from './reading.interface';
+import {
+  ICreateReading,
+  IReadingFilter,
+  IUpdateReading,
+} from './reading.interface';
 
 @Injectable()
 export class ReadingService {
@@ -14,17 +18,20 @@ export class ReadingService {
     private model: SoftDeleteModel<ReadingDocument>,
     private readonly lessonService: LessonService,
   ) {}
+
   async create(createReadingDto: ICreateReading) {
     const lesson = await this.lessonService.findOne(
-      createReadingDto.lesson.toString(),
+      createReadingDto.lessonId.toString(),
     );
     if (!lesson) {
       throw new UnauthorizedException('Thông tin không hợp lệ (lesson)');
     }
-    return await this.model.create(createReadingDto);
+    const reading = { ...createReadingDto, lesson: createReadingDto.lessonId };
+    delete reading.lessonId;
+    return await this.model.create(reading);
   }
 
-  async findAll(query: any) {
+  async findAll(query: IReadingFilter) {
     try {
       const { page, limit, orderBy, orderDirection, keyword, lessonId } = query;
       const filterOptions: FilterQuery<Reading> = {};

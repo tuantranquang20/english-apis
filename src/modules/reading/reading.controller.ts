@@ -17,7 +17,11 @@ import {
   TrimBodyPipe,
 } from '@src/commons/pipe';
 import { IdObjectSchema } from '@src/commons/utils/validator';
-import { ICreateReading, IUpdateReading } from './reading.interface';
+import {
+  ICreateReading,
+  IReadingFilter,
+  IUpdateReading,
+} from './reading.interface';
 import { ReadingService } from './reading.service';
 import {
   createReadingValidator,
@@ -49,7 +53,7 @@ export class ReadingController {
       new JoiValidationPipe(readingFilterValidator),
       new ModifyFilterQueryPipe(),
     )
-    query: any,
+    query: IReadingFilter,
   ) {
     try {
       const [data, total] = await this.readingService.findAll(query);

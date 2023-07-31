@@ -3,20 +3,23 @@ import { IFilterBase } from '@src/commons/interfaces/common.interface';
 
 export interface ICreateListening {
   type: ListeningType;
-  lesson: string;
+  lessonId: string;
   answer: string;
-  titquestionle: string;
+  question: string;
   words: Array<string>;
+  rawAnswer: string;
 }
 
 export interface IUpdateListening {
   type?: ListeningType;
-  lesson?: string;
+  lessonId?: string;
   answer?: string;
-  titquestionle?: string;
+  question?: string;
   words?: Array<string>;
+  rawAnswer?: string;
 }
 
 export interface IListeningFilter extends IFilterBase {
   type?: ListeningType;
+  lessonId: string;
 }

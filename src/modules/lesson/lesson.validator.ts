@@ -12,9 +12,6 @@ export const createCourseValidator = Joi.object({
 });
 
 export const updateCourseValidator = Joi.object({
-  type: Joi.string()
-    .valid(...Object.values(LessonType))
-    .optional(),
   name: Joi.string().max(INPUT_TEXT_MAX_LENGTH).optional(),
   title: Joi.string().max(INPUT_TEXT_MAX_LENGTH).optional(),
 });
