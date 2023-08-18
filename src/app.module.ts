@@ -13,6 +13,7 @@ import { UserLearningModule } from './modules/user-learning/user-learning.module
 import { APP_FILTER } from '@nestjs/core';
 import { InternalServerErrorFilter } from './commons/exeptions/exceptions.filter';
 import { JwtModule } from '@nestjs/jwt';
+import { UserHistoryModule } from './modules/user-history/user-history.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { JwtModule } from '@nestjs/jwt';
     ReadingModule,
     AuthModule,
     UserLearningModule,
+    UserHistoryModule,
   ],
   controllers: [],
   providers: [

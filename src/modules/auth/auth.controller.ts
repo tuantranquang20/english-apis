@@ -55,16 +55,17 @@ export class AuthController {
           statusCode: 400,
         });
       }
-      const isCorrectPassword = await bcrypt.compare(
-        loginAuthDto?.password,
-        userByEmail?.password,
-      );
-
-      if (!isCorrectPassword) {
-        errors.push({
-          message: 'Password không hợp lệ',
-          statusCode: 400,
-        });
+      if (userByEmail) {
+        const isCorrectPassword = await bcrypt.compare(
+          loginAuthDto?.password,
+          userByEmail?.password,
+        );
+        if (!isCorrectPassword) {
+          errors.push({
+            message: 'Password không hợp lệ',
+            statusCode: 400,
+          });
+        }
       }
 
       if (errors?.length) {
@@ -77,6 +78,8 @@ export class AuthController {
       const user = await this.authService.login(loginAuthDto);
       return new SuccessResponse(user);
     } catch (error) {
+      console.log(error);
+
       throw new InternalServerErrorException();
     }
   }

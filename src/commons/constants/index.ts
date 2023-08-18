@@ -5,6 +5,7 @@ export enum CollectionName {
   LISTENINGS = 'listenings',
   READINGS = 'readings',
   USER_LEARNINGS = 'user_learnings',
+  USER_HISTORIES = 'user_histories',
 }
 
 export const MAX_INTEGER = 2147483647;

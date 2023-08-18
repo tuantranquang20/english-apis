@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { User, UserDocument } from './entities/user.entity';
 import { InjectModel } from '@nestjs/mongoose';
-import { CollectionName, OrderDirection, Role } from '@src/commons/constants';
+import { CollectionName, OrderDirection } from '@src/commons/constants';
 import { SoftDeleteModel } from 'mongoose-delete';
 import { IFilterBase } from '@src/commons/interfaces/common.interface';
-import { FilterQuery } from 'mongoose';
+import { FilterQuery, PipelineStage } from 'mongoose';
 import { IUpdateUser } from './user.interface';
 @Injectable()
 export class UserService {
@@ -19,33 +19,95 @@ export class UserService {
 
   async findAll(query: IFilterBase) {
     const { page, limit, orderBy, orderDirection, keyword } = query;
-    const filterOptions: FilterQuery<User> = {};
+
+    const matchStage: FilterQuery<User> = {};
     if (keyword) {
-      filterOptions.$and = [];
-      filterOptions.$and.push({
-        $or: [
-          {
-            username: { $regex: new RegExp(keyword, 'i') },
-          },
-          {
-            email: { $regex: new RegExp(keyword, 'i') },
-          },
-        ],
-      });
+      matchStage.$or = [
+        { username: { $regex: new RegExp(keyword, 'i') } },
+        { email: { $regex: new RegExp(keyword, 'i') } },
+      ];
     }
-    const sortOptions = {};
+
+    const sortStage = {};
     if (orderBy) {
-      sortOptions[orderBy] = orderDirection === OrderDirection.DESC ? -1 : 1;
+      sortStage[orderBy] = orderDirection === OrderDirection.DESC ? -1 : 1;
     }
 
-    const users = await this.model
-      .find(filterOptions)
-      .sort(sortOptions)
-      .skip(page)
-      .limit(limit)
-      .select('_id role username email');
+    const pipeline = [
+      {
+        $addFields: {
+          id: { $toString: '$_id' },
+        },
+      },
+      { $match: matchStage },
+      { $sort: sortStage },
+      { $skip: page * limit },
+      { $limit: limit },
+      {
+        $project: {
+          id: 1,
+          role: 1,
+          username: 1,
+          email: 1,
+        },
+      },
+      {
+        $lookup: {
+          from: CollectionName.USER_HISTORIES,
+          localField: 'id',
+          foreignField: 'user',
+          as: 'userHistories',
+          pipeline: [
+            {
+              $sort: {
+                createdAt: -1,
+              },
+            },
+            {
+              $project: {
+                type: 1,
+                value: 1,
+                _id: 0,
+              },
+            },
+          ],
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          users: { $push: '$$ROOT' },
+          total: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          users: { $slice: ['$users', page, limit] },
+          total: 1,
+        },
+      },
+    ] as PipelineStage[];
 
-    const total = await this.model.find(filterOptions).count();
+    const result = await this.model.aggregate(pipeline);
+
+    const users = result[0]?.users?.map((item) => {
+      const result = item?.userHistories?.reduce((acc, el) => {
+        const type = el?.type;
+        if (!acc[type]) {
+          acc[type] = { type, values: [] };
+        }
+        acc[type]?.values.push(el?.value);
+        return acc;
+      }, {});
+
+      return {
+        ...item,
+        userHistories: Object.values(result),
+      };
+    });
+
+    const total = result[0]?.total || 0;
 
     return [users, total];
   }
